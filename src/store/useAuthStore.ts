@@ -7,12 +7,12 @@ interface User {
   name: string;
   email: string;
   role: string;
-  hourBank: {
+  hourBank?: {
     total: number;
     used: number;
     plan: string;
   };
-  skills: string[];
+  skills?: string[];
 }
 
 interface LoginData {
@@ -27,9 +27,19 @@ interface RegisterData {
   role?: string;
   hourBank?: {
     total: number;
+    used: number;
     plan: string;
-  };
+  } | null;
   skills?: string[];
+}
+
+interface RegisterFormData extends RegisterData {
+  confirmPassword: string;
+  hourBank: {
+    total: number;
+    used: number;
+    plan: string;
+  } | null;
 }
 
 interface ApiError {
@@ -38,18 +48,17 @@ interface ApiError {
       message?: string;
     };
   };
-  message: string;
+  message?: string;
 }
 
 interface AuthState {
   user: User | null;
+  token: string | null;
   isLoggingIn: boolean;
   isRegistering: boolean;
   isUpdatingProfile: boolean;
-  token: string | null;
-
   login: (data: LoginData) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
+  register: (data: RegisterFormData) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (data: Partial<User>) => Promise<void>;
 }
@@ -64,10 +73,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (data) => {
     set({ isLoggingIn: true });
     try {
-      console.log('Attempting login with:', data);
       const response = await axiosInstance.post('/api/v1/auth/login', data);
-      console.log('Login response:', response.data);
-      
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
@@ -80,6 +86,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
     } catch (error) {
       const apiError = error as ApiError;
+
       console.error('Login error details:', {
         error: apiError,
         response: apiError.response,
@@ -100,7 +107,28 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (data) => {
     set({ isRegistering: true });
     try {
-      const response = await axiosInstance.post('/api/v1/auth/register', data);
+      const { confirmPassword, ...registerData } = data;
+      
+      // Validate passwords match
+      if (registerData.password !== confirmPassword) {
+        toast({
+          title: "Erro na validação",
+          description: "As senhas não coincidem",
+          variant: "destructive",
+        });
+        throw new Error("Passwords don't match");
+      }
+
+      const response = await axiosInstance.post('/api/v1/auth/signup', {
+        ...registerData,
+        role: registerData.role || 'client',
+        hourBank: registerData.hourBank || {
+          total: 20,
+          used: 0,
+          plan: 'basic'
+        }
+      });
+      
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
@@ -113,6 +141,12 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
     } catch (error) {
       const apiError = error as ApiError;
+      
+      // Don't show toast for password validation error since we already showed it
+      if (error instanceof Error && error.message === "Passwords don't match") {
+        throw error;
+      }
+
       toast({
         variant: "destructive",
         title: "Erro no cadastro",
