@@ -37,13 +37,13 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-2">
-              <Image
+              {/* <Image
                 src="/logo.png"
                 alt="TechSolutions Logo"
                 width={40}
                 height={40}
                 className="rounded-full"
-              />
+              /> */}
               <span className="text-2xl font-bold text-blue-600">TechSolutions</span>
             </div>
             <h1 className="text-xl font-bold mb-2">Faça login com sua conta</h1>
