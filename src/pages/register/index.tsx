@@ -94,7 +94,7 @@ export default function RegisterPage() {
       <div className="flex-1 flex flex-col items-center justify-center px-8 sm:px-16 lg:px-12">
         <div className="w-full max-w-md">
           <div className="mb-2">
-            <h1 className="text-4xl font-medium text-blue-500 mb-2">Bem vindo a <strong>TechSolutions!</strong></h1>
+            <h1 className="text-3xl font-medium text-blue-500 mb-2">Bem vindo a <strong>TechSolutions!</strong></h1>
             <p className="font-bold text-xl text-gray-800">Crie sua conta agora mesmo!</p>
           </div>
 
