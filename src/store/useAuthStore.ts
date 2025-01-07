@@ -70,39 +70,42 @@ export const useAuthStore = create<AuthState>((set) => ({
   isRegistering: false,
   isUpdatingProfile: false,
 
-  login: async (data) => {
-    set({ isLoggingIn: true });
-    try {
-      const response = await axiosInstance.post('/api/v1/auth/login', data);
-      const { token, user } = response.data;
-      
-      localStorage.setItem('token', token);
-      set({ user, token });
-      
-      toast({
-        title: "Sucesso!",
-        description: "Login realizado com sucesso.",
-        variant: "success",
-      });
-    } catch (error) {
-      const apiError = error as ApiError;
+  login: async (data: LoginData, onSuccessRedirect?: (role: string | undefined) => void) => {
+  set({ isLoggingIn: true });
+  try {
+    const response = await axiosInstance.post('/api/v1/auth/login', data);
+    const { token, user } = response.data;
+    
+    localStorage.setItem('token', token);
+    set({ user, token });
+    
+    toast({
+      title: "Sucesso!",
+      description: "Login realizado com sucesso.",
+      variant: "success",
+    });
 
-      console.error('Login error details:', {
-        error: apiError,
-        response: apiError.response,
-        message: apiError.message,
-      });
-      
-      toast({
-        variant: "destructive",
-        title: "Erro no login",
-        description: apiError.response?.data?.message || apiError.message || "Erro ao fazer login",
-      });
-      throw error;
-    } finally {
-      set({ isLoggingIn: false });
+    if (onSuccessRedirect) {
+      onSuccessRedirect(user.role); 
     }
-  },
+  } catch (error) {
+    const apiError = error as ApiError;
+    console.error('Login error details:', {
+      error: apiError,
+      response: apiError.response,
+      message: apiError.message,
+    });
+    
+    toast({
+      variant: "destructive",
+      title: "Erro no login",
+      description: apiError.response?.data?.message || apiError.message || "Erro ao fazer login",
+    });
+    throw error;
+  } finally {
+    set({ isLoggingIn: false });
+  }
+},
 
   register: async (data) => {
     set({ isRegistering: true });
