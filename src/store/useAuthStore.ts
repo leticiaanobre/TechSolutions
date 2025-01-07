@@ -76,6 +76,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       toast({
         title: "Sucesso!",
         description: "Login realizado com sucesso.",
+        variant: "success",
       });
     } catch (error) {
       const apiError = error as ApiError;
@@ -87,7 +88,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       
       toast({
         variant: "destructive",
-        title: "Erro",
+        title: "Erro no login",
         description: apiError.response?.data?.message || apiError.message || "Erro ao fazer login",
       });
       throw error;
@@ -108,13 +109,13 @@ export const useAuthStore = create<AuthState>((set) => ({
       toast({
         title: "Sucesso!",
         description: "Conta criada com sucesso.",
+        variant: "success",
       });
     } catch (error) {
       const apiError = error as ApiError;
-      console.error('Register error:', apiError); 
       toast({
         variant: "destructive",
-        title: "Erro",
+        title: "Erro no cadastro",
         description: apiError.response?.data?.message || apiError.message || "Erro ao criar conta",
       });
       throw error;
@@ -132,13 +133,13 @@ export const useAuthStore = create<AuthState>((set) => ({
       toast({
         title: "Sucesso!",
         description: "Logout realizado com sucesso.",
+        variant: "success",
       });
     } catch (error) {
       const apiError = error as ApiError;
-      console.error('Logout error:', apiError); 
       toast({
         variant: "destructive",
-        title: "Erro",
+        title: "Erro no logout",
         description: apiError.response?.data?.message || apiError.message || "Erro ao fazer logout",
       });
     }
@@ -153,13 +154,13 @@ export const useAuthStore = create<AuthState>((set) => ({
       toast({
         title: "Sucesso!",
         description: "Perfil atualizado com sucesso.",
+        variant: "success",
       });
     } catch (error) {
       const apiError = error as ApiError;
-      console.error('Update profile error:', apiError); 
       toast({
         variant: "destructive",
-        title: "Erro",
+        title: "Erro na atualização",
         description: apiError.response?.data?.message || apiError.message || "Erro ao atualizar perfil",
       });
       throw error;
