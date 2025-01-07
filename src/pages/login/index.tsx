@@ -3,51 +3,30 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Mail, Lock } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useToast } from "@/hooks/use-toast"
+import { useAuthStore } from "@/store/useAuthStore"
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
+  const [showPassword, setShowPassword] = useState(false)
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  })
+  
+  const { login, isLoggingIn } = useAuthStore()
+  const router = useRouter()
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setIsLoading(true)
-
-    const formData = new FormData(event.currentTarget)
-    const email = formData.get('email')
-    const password = formData.get('password')
-
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Erro ao fazer login')
-      }
-
-      // Handle successful login here (e.g., store token, redirect)
-      toast({
-        title: "Sucesso!",
-        description: "Login realizado com sucesso.",
-      })
-
+      await login(formData)
+    //   router.push('/dashboard')
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Ocorreu um erro ao fazer login",
-      })
-    } finally {
-      setIsLoading(false)
+      console.error('Login failed:', error)
     }
   }
 
@@ -57,7 +36,7 @@ export default function LoginPage() {
       <div className="flex-1 flex flex-col items-center justify-center px-8 sm:px-16 lg:px-12">
         <div className="w-full max-w-md">
           <div className="mb-8">
-            <div className="flex items-center gap-2 mb-8">
+            <div className="flex items-center gap-2 mb-2">
               <Image
                 src="/logo.png"
                 alt="TechSolutions Logo"
@@ -67,7 +46,7 @@ export default function LoginPage() {
               />
               <span className="text-2xl font-bold text-blue-600">TechSolutions</span>
             </div>
-            <h1 className="text-2xl font-bold mb-2">Faça login com sua conta</h1>
+            <h1 className="text-xl font-bold mb-2">Faça login com sua conta</h1>
             <p className="text-muted-foreground">
               Bem vindo de volta! Comece a gerenciar seus clientes e tarefas.
             </p>
@@ -78,27 +57,43 @@ export default function LoginPage() {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                name="email"
                 type="email"
-                placeholder="nome@exemplo.com"
                 icon={<Mail className="h-5 w-5 text-gray-400" />}
+                placeholder="nome@exemplo.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                icon={<Lock className="h-5 w-5 text-gray-400" />}
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  icon={<Lock className="h-5 w-5 text-gray-400" />}
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5 text-gray-400" />
+                  ) : (
+                    <Eye className="h-5 w-5 text-gray-400" />
+                  )}
+                </button>
+              </div>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Entrando..." : "Login"}
+            <Button type="submit" className="w-full" disabled={isLoggingIn}>
+              {isLoggingIn ? "Entrando..." : "Login"}
             </Button>
           </form>
 
