@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuthStore } from "@/store/useAuthStore"
-import { useRouter } from 'next/navigation'
+import { useRoleRedirect } from '@/hooks/useRoleRedirect'
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -18,13 +18,13 @@ export default function LoginPage() {
   })
   
   const { login, isLoggingIn } = useAuthStore()
-  const router = useRouter()
+  const { redirectUser } = useRoleRedirect();
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     try {
-      await login(formData)
-    //   router.push('/dashboard')
+      console.log('Login successful');
+      await login(formData, redirectUser);
     } catch (error) {
       console.error('Login failed:', error)
     }
