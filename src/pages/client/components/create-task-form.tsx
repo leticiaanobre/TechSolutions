@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -21,19 +21,24 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Plus } from 'lucide-react';
+import { useClientStore } from '@/store/useClientStore';
 
 const taskSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().min(1, 'Description is required'),
   priority: z.enum(['low', 'medium', 'high']),
   estimatedHours: z.number().min(1),
-  dueDate: z.string(),
+  dueDate: z.string().refine((value) => !isNaN(Date.parse(value)), {
+    message: 'Invalid date format',
+  }),
+  assignedTo: z.string().min(1, 'Assigned user is required'),
 });
 
 type TaskFormData = z.infer<typeof taskSchema>;
 
 export function CreateTaskForm() {
   const [open, setOpen] = React.useState(false);
+  const { createTask, users, fetchUsers } = useClientStore();
   const {
     register,
     handleSubmit,
@@ -43,10 +48,21 @@ export function CreateTaskForm() {
     resolver: zodResolver(taskSchema),
   });
 
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
   const onSubmit = async (data: TaskFormData) => {
     try {
-      // TODO: Implement task creation with Supabase
-      console.log(data);
+      const formattedData = {
+      nome: data.name,  
+      descricao: data.description,  
+      prioridade: data.priority, 
+      horasEstimadas: data.estimatedHours, 
+      dataVencimento: new Date(data.dueDate).toISOString().split('T')[0],  
+      atribuirDesenvolvedor: data.assignedTo, 
+      };
+      await createTask(formattedData);
       setOpen(false);
       reset();
     } catch (error) {
@@ -62,7 +78,7 @@ export function CreateTaskForm() {
           New Task
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-white">
         <DialogHeader>
           <DialogTitle>Create New Task</DialogTitle>
         </DialogHeader>
@@ -131,6 +147,31 @@ export function CreateTaskForm() {
             )}
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="assignedTo">Assigned To</Label>
+            <Select
+              onValueChange={(value) =>
+                register('assignedTo').onChange({
+                  target: { value, name: 'assignedTo' },
+                })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select user" />
+              </SelectTrigger>
+              <SelectContent>
+                {users.map((user) => (
+                  <SelectItem key={user._id} value={user._id}>
+                    {user.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.assignedTo && (
+              <p className="text-sm text-destructive">{errors.assignedTo.message}</p>
+            )}
+          </div>
+
           <Button type="submit" className="w-full">
             Create Task
           </Button>
@@ -139,3 +180,4 @@ export function CreateTaskForm() {
     </Dialog>
   );
 }
+
