@@ -113,9 +113,9 @@ export function TaskList({ filter }: TaskListProps) {
                   : task.estimatedHours}
               </TableCell>
               <TableCell>{new Date(task.dueDate).toLocaleDateString()}</TableCell>
-              <TableCell>
+              {/* <TableCell>
                 {task.assignedTo ? task.assignedTo : 'Unassigned'}
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           ))}
         </TableBody>
