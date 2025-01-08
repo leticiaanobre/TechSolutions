@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -8,9 +8,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { useClientStore } from '@/store/useClientStore';
+import { Loader2 } from 'lucide-react';
 
 type Task = {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   priority: 'low' | 'medium' | 'high';
@@ -29,11 +31,11 @@ type TaskListProps = {
 };
 
 export function TaskList({ filter }: TaskListProps) {
-  const [tasks, setTasks] = React.useState<Task[]>([]);
+  const { tasks, fetchTasks, isFetchingData } = useClientStore();
 
-  React.useEffect(() => {
-    // TODO: Fetch tasks from Supabase based on filter
-  }, [filter]);
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
 
   const getPriorityColor = (priority: Task['priority']) => {
     switch (priority) {
@@ -57,6 +59,20 @@ export function TaskList({ filter }: TaskListProps) {
     }
   };
 
+  const filteredTasks = filter === 'all' ? tasks : tasks.filter(task => task.status === 'in-progress');
+
+  if (isFetchingData) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (tasks.length === 0) {
+    return <div className="text-center py-4">No tasks found.</div>;
+  }
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -71,8 +87,8 @@ export function TaskList({ filter }: TaskListProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {tasks.map((task) => (
-            <TableRow key={task.id}>
+          {filteredTasks.map((task) => (
+            <TableRow key={task._id}>
               <TableCell>
                 <div>
                   <div className="font-medium">{task.name}</div>
@@ -98,7 +114,7 @@ export function TaskList({ filter }: TaskListProps) {
               </TableCell>
               <TableCell>{new Date(task.dueDate).toLocaleDateString()}</TableCell>
               <TableCell>
-                {task.assignedTo ? task.assignedTo.name : 'Unassigned'}
+                {task.assignedTo ? task.assignedTo : 'Unassigned'}
               </TableCell>
             </TableRow>
           ))}
@@ -107,3 +123,4 @@ export function TaskList({ filter }: TaskListProps) {
     </div>
   );
 }
+
