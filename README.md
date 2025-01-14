@@ -1,40 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Web-Based Task Management Application
 
-## Getting Started
+This project is a web-based application designed to streamline task management for clients, programmers, and administrators. It leverages modern web technologies to ensure responsiveness, security, and usability. Below, you'll find an overview of the application, its features, and instructions for setting up and running the project.
 
-First, run the development server:
+![Imagem do Projeto](./src//assets//image.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Overview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application serves as a centralized platform for managing tasks and monitoring progress. It provides role-based dashboards for clients, programmers, and administrators, each with specific functionalities to enhance productivity and collaboration.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Features
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+### Client Dashboard
+- **Account Management**: Clients can register and log in securely using their email and password.
+- **Task Creation**: Submit new tasks with details such as description, estimated hours, and priority.
+- **Ongoing Tasks**: View a list of tasks currently being worked on.
+- **Task History**: Access a record of all completed tasks and their status.
+- **Hours Management**: Monitor contracted hours, remaining hours, and their status.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+### Programmer Dashboard
+- **Task View**: Programmers can see tasks assigned to them with all relevant details.
+- **In-Progress Tasks**: Track tasks currently being worked on.
+- **Completed Tasks**: Review tasks that have been successfully completed.
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Administrator Dashboard
+- **User Management**: Access a list of all registered clients and programmers.
+- **User Simulation**: "Log in" as a client or programmer to view their respective dashboards.
+- **Task Delegation**: Manage all submitted tasks, assign them to programmers, or reject them as needed.
 
-## Learn More
+## Technical Details
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend**: Built using modern JavaScript frameworks such as React for a clean and responsive UI.
+- **Backend**: Powered by Express.js to handle business logic and APIs.
+- **Database**: Uses  MongoDB for persistent and reliable data storage.
+- **Authentication**: Implements secure login functionality for role-based access.
+- **Responsiveness**: Optimized for desktops, ensuring a seamless user experience.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+This project aims to demonstrate practical task management solutions by integrating client, programmer, and admin functionalities in one platform. Future enhancements may include mobile responsiveness, advanced analytics, and integrations with third-party tools.
