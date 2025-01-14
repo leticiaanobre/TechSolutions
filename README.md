@@ -2,7 +2,7 @@
 
 This project is a web-based application designed to streamline task management for clients, programmers, and administrators. It leverages modern web technologies to ensure responsiveness, security, and usability. Below, you'll find an overview of the application, its features, and instructions for setting up and running the project.
 
-![Imagem do Projeto](image.png)
+![Imagem do Projeto](./src//assets//image.png)
 
 ## Overview
 
